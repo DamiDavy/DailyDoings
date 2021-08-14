@@ -4,9 +4,9 @@ import { fetchTodos, addTodoFetch, deleteTodoFetch } from '../api'
 const ADD_TODO = 'ADD_TODO'
 const DELETE_TODO = 'DELETE_TODO'
 
-export const addTodo = (date, todo, id) => ({
+export const addTodo = (date, todo, id, user) => ({
   type: ADD_TODO,
-  date, todo, id
+  date, todo, id, user
 })
 
 export const deleteTodo = (id) => ({
@@ -22,6 +22,7 @@ export const todosReducer = (state = [], action) => {
       }
       else {
         const newTodo = {
+            user: action.user,
             title: action.todo,
             id: action.id,
             date: action.date
@@ -36,10 +37,11 @@ export const todosReducer = (state = [], action) => {
 }
 
 export const getTodosThunk = (user, year, month) => async (dispatch) => {
+  console.log(user)
   let response = await fetchTodos(user, year, month)
   response.forEach(todo => {
     const dateAsString = `${todo.year}-${todo.month}-${todo.day}`
-    dispatch(addTodo(dateAsString, todo.title, todo.id))
+    dispatch(addTodo(dateAsString, todo.title, todo.id, todo.user))
   })
 }
 

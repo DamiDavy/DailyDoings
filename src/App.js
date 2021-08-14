@@ -11,6 +11,7 @@ import { loggedInSelector, loginSelector } from './redux/selectors'
 import { Registration } from './components/Registration';
 import { useEffect, useState } from 'react';
 import { isAuthorized, login } from './api'
+import { deleteTodo } from './redux/calendar-reducer';
 
 const withRedirectionToLogin = (component, isAuth) => {
   if (!isAuth) return <Redirect to="/login" />
@@ -23,12 +24,15 @@ function App() {
 
   const [todosFetched, setTodosFetched] = useState(false)
 
+  const todos = useSelector(state => state.todosCalendar)
+
   const dispatch = useDispatch()
 
   const exit = () => {
     dispatch(logoutThunk())
     localStorage.removeItem('login')
     localStorage.removeItem('authorized')
+    todos.map(todo => dispatch(deleteTodo(todo.id)))
     console.log('logged out')
   }
 

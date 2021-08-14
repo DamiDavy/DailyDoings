@@ -8,6 +8,9 @@ export const dateFormatted = (year, month, day) => {
 
 export const Day = ({day, month, year}) => {
 
+  const user = useSelector(loginSelector)
+  console.log(user)
+
   const dateInFormat = dateFormatted(year, month, day)
 
   const dayTodos = useSelector(state => state.todosCalendar.filter(todo => todo.date === dateInFormat))
