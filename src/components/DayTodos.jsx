@@ -1,15 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import {useParams} from "react-router-dom";
-import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router'
 
 import { deleteTodoThunk } from '../redux/calendar-reducer'
 import {AddTodoForm} from './AddTodoForm'
+import { monthsTitles } from './Calendar'
+import { TodosContainer } from '../styled-components/DatTodos-style'
+import { Todo } from './Todo'
 
 export const DayTodos = (props) => {
 
   const { date } = useParams();
+  const dateAsArray = useMemo(() => date.split('-'), [date])
   const dayTodos = useSelector(state => state.todosCalendar.filter(todo => todo.date === date))
 
   const [allTodosRemoved, setAllTodosRemoved] = useState(false)
@@ -22,16 +25,24 @@ export const DayTodos = (props) => {
     }
   }
 
+  const [todoRepeatFormId, setTodoRepeatFormId] = useState(null)
+
+  const showTodoRepeatForm = (id) => {
+    setTodoRepeatFormId(id)
+  }
+
+  const hideTodoRepeatForm = () => {
+    setTodoRepeatFormId(null)
+  }
+
   return (
-    <>
+    <TodosContainer >
     {allTodosRemoved && <Redirect to="/" />}
-    <h2>{date}</h2>
-    {dayTodos.map(todo => 
-    <div key={todo.id}><Link className="dayLink" to={`/todoitem/${todo.id}`}>{todo.title}</Link>
-    <button onClick={() => removeTodo(todo.id)}>Delete</button>
-    <button><Link className="dayLink" to={`/repeat/${todo.id}`}>Repeat</Link></button></div>)}
+    <h3>{`${monthsTitles[+dateAsArray[1] - 1]} ${dateAsArray[2]} ${dateAsArray[0]}`}</h3>
+    {dayTodos.map(todo => <Todo key={todo.id} todo={todo} removeTodo={removeTodo} 
+      showTodoRepeatForm={showTodoRepeatForm} hideTodoRepeatForm={hideTodoRepeatForm}
+      repeatFormVisible={todo.id === todoRepeatFormId} />)}
     <AddTodoForm date={date}/>
-    <button onClick={() => props.exit()}>Log Out</button>
-    </>
+    </TodosContainer>
   );
 }

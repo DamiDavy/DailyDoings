@@ -1,12 +1,11 @@
-import { v4 as uuidv4 } from 'uuid'
-import { fetchTodos, addTodoFetch, deleteTodoFetch } from '../api'
+import { todoAPI } from '../api'
 
 const ADD_TODO = 'ADD_TODO'
 const DELETE_TODO = 'DELETE_TODO'
 
-export const addTodo = (date, todo, id, user) => ({
+export const addTodo = (date, todo, id) => ({
   type: ADD_TODO,
-  date, todo, id, user
+  date, todo, id
 })
 
 export const deleteTodo = (id) => ({
@@ -16,13 +15,11 @@ export const deleteTodo = (id) => ({
 export const todosReducer = (state = [], action) => {
   switch (action.type) {
     case ADD_TODO:
-      console.log('added', action.todo, action.date)
       if (state.some(item => item.id === action.id)) {
         return state
       }
       else {
         const newTodo = {
-            user: action.user,
             title: action.todo,
             id: action.id,
             date: action.date
@@ -37,16 +34,15 @@ export const todosReducer = (state = [], action) => {
 }
 
 export const getTodosThunk = (user, year, month) => async (dispatch) => {
-  console.log(user)
-  let response = await fetchTodos(user, year, month)
+  let response = await todoAPI.fetchTodos(user, year, month)
   response.forEach(todo => {
     const dateAsString = `${todo.year}-${todo.month}-${todo.day}`
-    dispatch(addTodo(dateAsString, todo.title, todo.id, todo.user))
+    dispatch(addTodo(dateAsString, todo.title, todo.id))
   })
 }
 
 export const addTodoThunk = (user, title, date) => async (dispatch) => {
-  let response = await addTodoFetch(user, title, date)
+  let response = await todoAPI.addTodoFetch(user, title, date)
   if (response.result === 0) {
     const dateAsArray = date.split('-')
     dispatch(getTodosThunk(user, dateAsArray[0], dateAsArray[1]))
@@ -54,7 +50,7 @@ export const addTodoThunk = (user, title, date) => async (dispatch) => {
 }
 
 export const deleteTodoThunk = (id) => async (dispatch) => {
-  let response = await deleteTodoFetch(id)
+  let response = await todoAPI.deleteTodoFetch(id)
   if (response.result === 0) {
     dispatch(deleteTodo(id))
   }

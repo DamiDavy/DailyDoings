@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import '../App.css'
-import { Day } from './Day';
 import { useDispatch, useSelector } from 'react-redux'
 
-import {loggedInSelector, loginSelector} from '../redux/selectors'
+import { Day } from './Day';
+import { loginSelector} from '../redux/selectors'
 import { getTodosThunk } from '../redux/calendar-reducer'
-import { fetchTodos } from '../api';
+import { MonthTitle, CalendarGrid,
+  MonthTitleAndButtonsContainer, ChangeMonthButton } from '../styled-components/Calendar-style'
+import { DayItem } from '../styled-components/Day-style'
+
+export const dateFormatted = (year, month, day) => {
+  return `${year}-${month + 1 < 10 ? `0${month + 1}` : month + 1}-${day < 10 ? `0${day}` : day}`
+}
 
 const weekDays = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
 
-const monthsTitles = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 
+export const monthsTitles = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 
                       'august', 'september', 'october', 'november', 'december']
 
 const weekDayHandling = (day) => {
@@ -38,7 +44,7 @@ export const Calendar = (props) => {
   const [month, setMonth] = useState(props.month)
 
   const [monthFirstWeekDay, setMonthFirstWeekDay] = 
-  useState(getFirstWeekDay(year, month))
+    useState(getFirstWeekDay(year, month))
 
   useEffect(() => {
     setMonthFirstWeekDay(getFirstWeekDay(year, month))
@@ -67,28 +73,28 @@ export const Calendar = (props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const monthAsString = month + 1 < 10 ? `0${month + 1}` : month + 1
-    dispatch(getTodosThunk(user, year, monthAsString))
-    console.log('todos for', year, monthAsString)
-  }, [year, month])
+    if (user !== undefined) {
+      const monthAsString = month + 1 < 10 ? `0${month + 1}` : month + 1
+      dispatch(getTodosThunk(user, year, monthAsString))
+    }
+  }, [year, month, user, dispatch])
 
   return <>
   
-  <h3>{`${monthsTitles[month]} ${year}`}</h3>
-  <div>
-    <button onClick={showPreviousMonth}>Prev</button>
-    <button onClick={showNextMonth}>Next</button>
-  </div>
-  <div className='wrapper'>
-      {weekDays.map(day => <div>{day}</div>)}
+  <MonthTitleAndButtonsContainer>
+    <ChangeMonthButton onClick={showPreviousMonth}>&#8249;</ChangeMonthButton>
+    <MonthTitle>{`${monthsTitles[month]} ${year}`}</MonthTitle>
+    <ChangeMonthButton onClick={showNextMonth}>&#8250;</ChangeMonthButton>
+  </MonthTitleAndButtonsContainer>
+  <CalendarGrid>
+      {weekDays.map(day => <DayItem key={day}>{day}</DayItem>)}
         {monthFirstWeekDay !== 0 && 
-        [...Array(monthFirstWeekDay).keys()].map(() => <div key={`empty${uuidv4()}`}></div>)}
+        [...Array(monthFirstWeekDay).keys()].map(() => <DayItem key={`empty${uuidv4()}`}></DayItem>)}
 
       {[...Array(lastMonthDay(year, month)).keys()]
-      .map((index) => <div key={`num${uuidv4()}`}
+      .map((index) => <DayItem key={`num${uuidv4()}`}
       className={index + 1 === props.today && month === props.month && year === props.year ? 'today' : 'day'}>
-        <Day day={index + 1} month={month} year={year} /> </div>)}
-  </div>
-  <button onClick={() => props.exit()}>Log Out</button>
+        <Day date={dateFormatted(year, month, index + 1)} /> </DayItem>)}
+  </CalendarGrid>
   </>
 }

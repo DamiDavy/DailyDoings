@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import { registrationThunk } from '../redux/auth-reducer'
-import { registeredSelector } from '../redux/selectors'
+import { messageSelector, registeredSelector } from '../redux/selectors'
+import { LoginFormInput, SubmitFormButton, DisabledButton, Error} from '../styled-components/Forms-style'
+import '../App.css';
 
 export const Registration = () => {
 
@@ -18,17 +21,22 @@ export const Registration = () => {
 
   const registered = useSelector(registeredSelector)
 
+  const message = useSelector(messageSelector)
+
   const dispatch = useDispatch()
   const submitRegistrationForm = (e) => {
-    console.log('nini')
     dispatch(registrationThunk(login, email, password, passwordRepeat))
     e.preventDefault()
   }
 
+  useEffect(() => {
+    setError(message)
+  }, [message])
+
   const inputValidation = (e, type, title) => {
       if (type.length < 4) {
         setError(`${title} must contain at least four letters`)
-        e.target.style.border = '1px solid red'
+        e.target.style.border = '2px solid IndianRed'
       } else {
         setError('')
         e.target.style.border = '1px solid gray'
@@ -38,7 +46,7 @@ export const Registration = () => {
   const equalityPasswordsValidation = (e) => {
     if (password !== passwordRepeat) {
       setError('passwords are not equal')
-      e.target.style.border = '1px solid red'
+      e.target.style.border = '2px solid IndianRed'
     }
     else {
       setError('')
@@ -50,7 +58,7 @@ export const Registration = () => {
     const re = /^[^@]+@[^@]+.[^@]+$/
     if (!re.test(email)) {
       setError('invalid email address')
-      e.target.style.border = '1px solid red'
+      e.target.style.border = '2px solid IndianRed'
     }
     else {
       setError('')
@@ -63,23 +71,28 @@ export const Registration = () => {
     {registered && <Redirect to="/login" />}
     <h2>Registration</h2>
     <form>
-    <input value={login} onChange={(e) => setLogin(e.target.value)} autoComplete="off" placeholder='login'
+    <LoginFormInput value={login} onChange={(e) => setLogin(e.target.value)} autoComplete="off" placeholder='login'
         onBlur={e => inputValidation(e, login, 'login')}/><br/>
-    <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" autoComplete="off" placeholder='password'
+    <LoginFormInput value={password} onChange={(e) => setPassword(e.target.value)} type="password" autoComplete="off" placeholder='password'
         onBlur={e => inputValidation(e, password, 'password')}/><br/>
-    <input value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)} type="password" 
+    <LoginFormInput value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)} type="password" 
         autoComplete="off" placeholder='repeat password' 
-        onBlur={e => equalityPasswordsValidation(e)} /><br/>
-    <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" placeholder='name'/><br/>
-    <input value={surname} onChange={(e) => setSurname(e.target.value)} autoComplete="off" placeholder='surname'/><br/>
-    <input value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="off" placeholder='email' 
+        onKeyUp={e => equalityPasswordsValidation(e)} /><br/>
+    <LoginFormInput value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" placeholder='name'/><br/>
+    <LoginFormInput value={surname} onChange={(e) => setSurname(e.target.value)} autoComplete="off" placeholder='surname'/><br/>
+    <LoginFormInput value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="off" placeholder='email' 
     onBlur={e => emailValidation(e)} /><br/>
 
-    <p>{error}</p>
+    <Error>{error}</Error>
 
-    <button onClick={submitRegistrationForm} 
-    disabled={login.length < 4 || password.length < 4 || passwordRepeat !== password || email.length < 5}>Register</button>
+    {login.length < 4 || password.length < 4 || passwordRepeat !== password || email.length < 5 ? 
+    <DisabledButton>Register</DisabledButton> :
+    <SubmitFormButton onClick={submitRegistrationForm}>Register</SubmitFormButton>}
     </form>
+    <p>Or</p>
+    <p><SubmitFormButton>
+      <Link className='loginLink' to='/login'>Login</Link>
+    </SubmitFormButton></p>
     </>
   );
 }

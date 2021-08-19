@@ -9,3 +9,7 @@ export const registeredSelector = (state) => {
 export const loginSelector = (state) => {
   return state.authentication.login
 }
+
+export const messageSelector = (state) => {
+  return state.authentication.message
+}

@@ -1,22 +1,18 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { DayItem, TodosCount } from '../styled-components/Day-style'
 
-export const dateFormatted = (year, month, day) => {
-  return `${year}-${month + 1 < 10 ? `0${month + 1}` : month + 1}-${day < 10 ? `0${day}` : day}`
-}
+export const Day = ({date}) => {
 
-export const Day = ({day, month, year}) => {
-
-  const dateInFormat = dateFormatted(year, month, day)
-
-  const dayTodos = useSelector(state => state.todosCalendar.filter(todo => todo.date === dateInFormat))
+  const dayTodos = useSelector(state => state.todosCalendar.filter(todo => todo.date === date))
+  let day = useMemo(() => date.split('-')[2], [date])
 
   return (
-    <>
-    <Link className="dayLink" to={`/${dateInFormat}`}>{day}</Link>
-    <div className="todosCount">{dayTodos.length !== 0 && dayTodos.length}</div>
-    </>
+    <DayItem>
+      <Link className="dayLink" to={`/${date}`}>{+day < 10 ? day.charAt(1) : day}</Link>
+      {dayTodos.length !== 0 && <TodosCount>{dayTodos.length}</TodosCount>}
+    </DayItem>
   );
 }
 

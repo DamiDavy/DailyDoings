@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {loggedInSelector, loginSelector} from '../redux/selectors'
+import { loginSelector} from '../redux/selectors'
 
 import {addTodoThunk} from '../redux/calendar-reducer'
+import { TextInput, SubmitFormButton, FormContainer, DisabledButton, Error } from '../styled-components/Forms-style'
 
 export const AddTodoForm = ({date}) => {
-  const dateAsObject = new Date(date)
+  const dateAsObject = useMemo(() => {
+    console.log(date)
+    return new Date(date)
+  }, [date])
 
   const user = useSelector(loginSelector)
 
@@ -27,12 +31,12 @@ export const AddTodoForm = ({date}) => {
   }
 
   return (
-    <>
-    <input value={todo} onChange={(e) => setTodo(e.target.value)}/>
-    {error && <span>{error}</span>}
-    <button onClick={(e) => addTodoFromForm(e)}
-    disabled={new Date() > dateAsObject.setDate(dateAsObject.getDate() + 1)}
-    >Add</button>
-    </>
+    <FormContainer>
+    <TextInput value={todo} onChange={(e) => setTodo(e.target.value)} placeholder='title'/>
+    {new Date() > dateAsObject.setDate(dateAsObject.getDate() + 1) ? 
+    <DisabledButton>Add Todo</DisabledButton> :
+    <SubmitFormButton onClick={(e) => addTodoFromForm(e)}>Add Todo</SubmitFormButton>}
+    {error && <Error>{error}</Error>}
+    </FormContainer>
   );
 }

@@ -1,17 +1,16 @@
 import './App.css';
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 
 import {Calendar} from './components/Calendar'
 import {DayTodos} from './components/DayTodos'
-import {RepeatTodoForm} from './components/RepeatTodoForm'
 import {Login} from './components/Login'
-import { logoutThunk, loginAC, logoutAC } from './redux/auth-reducer'
+import { logoutThunk, loginAC } from './redux/auth-reducer'
 import { loggedInSelector, loginSelector } from './redux/selectors'
 import { Registration } from './components/Registration';
 import { useEffect, useState } from 'react';
-import { isAuthorized, login } from './api'
 import { deleteTodo } from './redux/calendar-reducer';
+import { Container, ButtonLoginLogout, Header, AuthInfo } from './App-style'
 
 const withRedirectionToLogin = (component, isAuth) => {
   if (!isAuth) return <Redirect to="/login" />
@@ -33,7 +32,6 @@ function App() {
     localStorage.removeItem('login')
     localStorage.removeItem('authorized')
     todos.map(todo => dispatch(deleteTodo(todo.id)))
-    console.log('logged out')
   }
 
   const setFetched = () => {
@@ -50,32 +48,47 @@ function App() {
     } else if (localStorage.getItem('authorized') === 'ok' && !loggedIn) {
       dispatch(loginAC(localStorage.getItem('login'), ''))
     }
-    const authInfoFromLocalStorage = localStorage.getItem('authorized')
-    const loginFromLocalStorage = localStorage.getItem('login')
-    console.log(authInfoFromLocalStorage, loginFromLocalStorage, loggedIn)
-  }, [loggedIn])
+  }, [loggedIn, login, dispatch])
+
+  // const [hiddenLoginLink, setHiddenLoginLink] = useState(false)
+
+  // const hideLoginLink = () => {
+  //   setHiddenLoginLink(true)
+  // }
+
+  // const showLoginLink = () => {
+  //   setHiddenLoginLink(false)
+  // }
 
   return (
     <BrowserRouter>
+    <Container>
+      <Header>
+      <AuthInfo>
+    {loggedIn ? <><span>As {login}</span>
+    <ButtonLoginLogout onClick={() => exit()}>Log Out</ButtonLoginLogout></> :
+    <ButtonLoginLogout>
+      <NavLink className='loginLinkGeneral' activeClassName="selected" to={'/login'}>Login</NavLink>
+      </ButtonLoginLogout>}
+    </AuthInfo>
+    </Header>
       <Switch>
         <Route path="/login" >
-          <Login />
+          <Login/>
         </Route>
         <Route path="/registration" >
-          <Registration />
-        </Route>
-        <Route path="/repeat/:todoId">
-          {withRedirectionToLogin(<RepeatTodoForm exit={exit}/>, loggedIn)}
+          <Registration/>
         </Route>
         <Route path="/:date">
           {withRedirectionToLogin(<DayTodos exit={exit}/>, loggedIn)}
         </Route>
         <Route path="/">
-          {withRedirectionToLogin(<Calendar year={now.getFullYear()} month={now.getMonth()} 
+          <Calendar year={now.getFullYear()} month={now.getMonth()} 
                           today={now.getDate()} exit={exit} 
-                          todosFetched={todosFetched} setFetched={setFetched}/>, loggedIn)}
+                          todosFetched={todosFetched} setFetched={setFetched}/>
         </Route>
       </Switch>
+      </Container>
     </BrowserRouter>
   );
 }

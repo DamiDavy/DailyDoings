@@ -1,34 +1,39 @@
-.wrapper {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 20px;
-  margin: 0 auto;
-  max-width: 700px;
-}
-
 .today {
   border: 1px solid gray
 }
 
-.day, .today {
-  position: relative;
-}
-
-.todosCount {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  font-size: 10px;
-}
-
 .dayLink {
-  text-decoration: none;
   color: gray;
 }
 
 .dayLink:hover {
   color: black;
 }
+
+.loginLinkGeneral {
+  color: palevioletred;
+}
+
+.dayLink, .loginLink, .loginLinkGeneral {
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.loginLink {
+  color: white;
+}
+
+.selected  {
+  color: white;
+  cursor: default;
+}
+
+
+
+
+
 
 
 
