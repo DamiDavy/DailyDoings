@@ -12,7 +12,8 @@ export const TextInput = styled.input`
 export const LoginFormInput = styled(TextInput)`
   width: 85%;
   margin-bottom: 0.5rem;
-  color: gray;
+  color: ${props => props.dark ? "MidnightBlue" : "gray"};
+  background-color: ${props => props.dark ? "Gainsboro" : "white"}; 
 `
 
 export const InlineInput = styled(TextInput)`
@@ -20,10 +21,11 @@ export const InlineInput = styled(TextInput)`
   width: 2rem;
   text-align: center;
   margin: 0 0.5rem;
-`;
+`
 
 export const SubmitFormButton = styled.button`
-  background-color: palevioletred;
+  color: CornflowerBlue;
+  background-color: ${props => props.dark ? "hsla(0, 0%, 100%, 0.4)" : "palevioletred"};
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -33,18 +35,19 @@ export const SubmitFormButton = styled.button`
 `
 
 export const DisabledButton = styled(SubmitFormButton)`
-background-color: #ccc;
-cursor: default`
+  background-color: ${props => props.dark ? "#444" : "#ccc"};
+  color: #999;
+  cursor: default
+`
 
 export const RepeatConfirmButton = styled(SubmitFormButton)`
   font-size: 0.8em;
-  margin-top: 0.5rem;
-  margin-left: auto;
-`;
+  margin: 0.5rem 0 0.5rem auto;
+`
 
 export const CancelButton = styled(RepeatConfirmButton)`
   margin-left: auto;
-`;
+`
 
 export const FormContainer = styled.div`
   display: flex;
@@ -52,20 +55,20 @@ export const FormContainer = styled.div`
   justify-content: space-around;
   flex-wrap: wrap;
   font-size: 1.1rem;
-  margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #ccc;
-  `
+  border-top: 1px solid ${props => props.dark ? "#444" : "#ddd"};
+`
 
 export const LoginFormContainer = styled.div`
   width: 90%;
-  `
+`
 
 export const RepeatFormContainer = styled(FormContainer)`
   font-size: 1rem;
   padding: 0.25rem 0.5rem;
   justify-content: space-around;
-`;
+  padding: 0rem 2rem;
+`
 
 export const Error = styled.p`
   color: IndianRed

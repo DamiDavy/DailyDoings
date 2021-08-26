@@ -2,33 +2,46 @@
   border: 1px solid gray
 }
 
+.day {
+  border: 1px solid hsla(0, 0%, 100%, 0.0);
+}
+.day:hover {
+  border: 1px solid #ddd;
+}
+
 .dayLink {
-  color: gray;
+  color: #777;
 }
-
 .dayLink:hover {
-  color: black;
+  color: #000;
 }
 
-.loginLinkGeneral {
-  color: palevioletred;
+.dayLinkDark {
+  color: #aaa;
+}
+.dayLinkDark:hover {
+  color: #ddd;
 }
 
-.dayLink, .loginLink, .loginLinkGeneral {
+.dayLink, .loginLink, .loginLinkGeneral, .dayLinkDark {
   text-decoration: none;
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.loginLink {
-  color: white;
+.back-img {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: -2;
+  object-fit: cover;
 }
 
-.selected  {
-  color: white;
-  cursor: default;
+.light-img {
+  opacity: 0.4;
 }
+
 
 
 

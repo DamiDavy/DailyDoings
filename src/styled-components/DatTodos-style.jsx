@@ -4,13 +4,15 @@ export const TodosContainer = styled.div`
   text-align: center;
   margin: 0 auto;
   font-size: 1.2rem;
-  `
+`
 
 export const TodoContainer = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  border-top: 1px solid #eee;
+  border-top: 1px solid ${props => props.dark ? "#666" : "#eee"};
+  padding: 0rem 2rem;
+  margin: 0rem;
 `
 
 export const TodoTitle = styled.div`
@@ -18,15 +20,16 @@ export const TodoTitle = styled.div`
 `
 
 export const ButtonHandleTodo = styled.button`
-  color: palevioletred;
+  color: ${props => props.dark ? "MidnightBlue" : "palevioletred"};
+  border: ${props => props.dark ? "none" : "1px solid palevioletred"};
+  background-color: ${props => props.dark ?  "DarkGrey" : "white"};
   font-size: 1em;
-  margin: 1em 0 1em 1em;
+  font-weight: bold;
+  margin: 0.5em;
   padding: 0.25em 0.5em;
-  border: 1px solid palevioletred;
   border-radius: 50%;
   cursor: pointer;
-  background-color: white;
-`;
+`
 
 export const TodoButtons = styled.div`
   margin-left: auto;

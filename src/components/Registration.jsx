@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { registrationThunk } from '../redux/auth-reducer'
-import { messageSelector, registeredSelector } from '../redux/selectors'
+import { registrationThunk, setErrorRegMessage } from '../redux/auth-reducer'
+import { messageRegSelector, registeredSelector } from '../redux/selectors'
+
 import { LoginFormInput, SubmitFormButton, DisabledButton, Error} from '../styled-components/Forms-style'
-import '../App.css';
+import '../App.css'
+import { ThemeContext } from '../App'
 
 export const Registration = () => {
+  const theme = useContext(ThemeContext)
 
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
@@ -21,7 +24,7 @@ export const Registration = () => {
 
   const registered = useSelector(registeredSelector)
 
-  const message = useSelector(messageSelector)
+  const message = useSelector(messageRegSelector)
 
   const dispatch = useDispatch()
   const submitRegistrationForm = (e) => {
@@ -33,66 +36,89 @@ export const Registration = () => {
     setError(message)
   }, [message])
 
-  const inputValidation = (e, type, title) => {
-      if (type.length < 4) {
-        setError(`${title} must contain at least four letters`)
-        e.target.style.border = '2px solid IndianRed'
-      } else {
-        setError('')
-        e.target.style.border = '1px solid gray'
-      }
+  const inputValidationOnBlur = (e, type, title) => {
+    if (type.length < 4) {
+      setError(`${title} must contain at least four letters`)
+      e.target.style.border = `4px solid ${theme === 'dark' ? '#ff7373' : 'IndianRed'}`
+    }
+  }
+
+  const inputValidationOnKeyUp = (e, type, title) => {
+    if (type.length > 3) {
+      setError('')
+      e.target.style.border = '1px solid gray'
+    }
   }
 
   const equalityPasswordsValidation = (e) => {
     if (password !== passwordRepeat) {
       setError('passwords are not equal')
-      e.target.style.border = '2px solid IndianRed'
+      e.target.style.border = `4px solid ${theme === 'dark' ? '#ff7373' : 'IndianRed'}`
     }
     else {
       setError('')
       e.target.style.border = '1px solid gray'
     }
-  } 
+  }
 
-  const emailValidation = (e) => {
-    const re = /^[^@]+@[^@]+.[^@]+$/
+  const re = /^[^@]+@[^@]+.[^@]+$/
+  const emailValidationOnBlur = (e) => {
     if (!re.test(email)) {
       setError('invalid email address')
-      e.target.style.border = '2px solid IndianRed'
+      e.target.style.border = `4px solid ${theme === 'dark' ? '#ff7373' : 'IndianRed'}`
     }
-    else {
+  }
+  const emailValidationOnKeyUp = (e) => {
+    if (re.test(email)) {
       setError('')
       e.target.style.border = '1px solid gray'
     }
-  } 
+  }
+
+  const clearErrorMessage = () => {
+    dispatch(setErrorRegMessage(''))
+  }
 
   return (
     <>
-    {registered && <Redirect to="/login" />}
-    <h2>Registration</h2>
-    <form>
-    <LoginFormInput value={login} onChange={(e) => setLogin(e.target.value)} autoComplete="off" placeholder='login'
-        onBlur={e => inputValidation(e, login, 'login')}/><br/>
-    <LoginFormInput value={password} onChange={(e) => setPassword(e.target.value)} type="password" autoComplete="off" placeholder='password'
-        onBlur={e => inputValidation(e, password, 'password')}/><br/>
-    <LoginFormInput value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)} type="password" 
-        autoComplete="off" placeholder='repeat password' 
-        onKeyUp={e => equalityPasswordsValidation(e)} /><br/>
-    <LoginFormInput value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" placeholder='name'/><br/>
-    <LoginFormInput value={surname} onChange={(e) => setSurname(e.target.value)} autoComplete="off" placeholder='surname'/><br/>
-    <LoginFormInput value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="off" placeholder='email' 
-    onBlur={e => emailValidation(e)} /><br/>
+      {registered && <Redirect to='/login' />}
+      <h2>Registration</h2>
+      <form onClick={() => setError('')}>
+        <LoginFormInput value={login} onChange={(e) => setLogin(e.target.value)} autoComplete='off'
+          placeholder='login'
+          onKeyUp={e => inputValidationOnKeyUp(e, login, 'login')}
+          onBlur={e => inputValidationOnBlur(e, login, 'login')} dark={theme === 'dark'} /><br />
+        <LoginFormInput value={password} onChange={(e) => setPassword(e.target.value)} type='password'
+          autoComplete='off' placeholder='password'
+          onKeyUp={e => inputValidationOnKeyUp(e, password, 'password')}
+          onBlur={e => inputValidationOnBlur(e, password, 'password')} dark={theme === 'dark'} /><br />
+        <LoginFormInput value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)}
+          type='password'
+          autoComplete='off' placeholder='repeat password'
+          onKeyUp={e => equalityPasswordsValidation(e)} dark={theme === 'dark'} /><br />
+        <LoginFormInput value={name} onChange={(e) => setName(e.target.value)}
+          autoComplete='off' placeholder='name' dark={theme === 'dark'} /><br />
+        <LoginFormInput value={surname} onChange={(e) => setSurname(e.target.value)}
+          autoComplete='off' placeholder='surname' dark={theme === 'dark'} /><br />
+        <LoginFormInput value={email} onChange={(e) => setEmail(e.target.value)}
+          autoComplete='off' placeholder='email'
+          onKeyUp={e => emailValidationOnKeyUp(e)}
+          onBlur={e => emailValidationOnBlur(e)} dark={theme === 'dark'} /><br />
+      </form>
+      <Error>{error}</Error>
 
-    <Error>{error}</Error>
+      {login.length < 4 || password.length < 4 || passwordRepeat !== password || email.length < 5 ?
+        <DisabledButton dark={theme === 'dark'}>Register</DisabledButton> :
+        <SubmitFormButton dark={theme === 'dark'} onClick={submitRegistrationForm}>
+          Register
+        </SubmitFormButton>}
 
-    {login.length < 4 || password.length < 4 || passwordRepeat !== password || email.length < 5 ? 
-    <DisabledButton>Register</DisabledButton> :
-    <SubmitFormButton onClick={submitRegistrationForm}>Register</SubmitFormButton>}
-    </form>
-    <p>Or</p>
-    <p><SubmitFormButton>
-      <Link className='loginLink' to='/login'>Login</Link>
-    </SubmitFormButton></p>
+      <p>Or</p>
+      <p>
+        <Link className='loginLink' to='/login'>
+          <SubmitFormButton dark={theme === 'dark'} onClick={clearErrorMessage}>Login</SubmitFormButton>
+        </Link>
+      </p>
     </>
-  );
+  )
 }

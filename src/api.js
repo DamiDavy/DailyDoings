@@ -1,30 +1,41 @@
+import axios from 'axios';
+
+const instanse = axios.create({
+  baseURL: "https://locacalendarapi.herokuapp.com/",
+  withCredentials: true,
+})
+
 export const authAPI = {
-  async login(name, password) {
+  async isAuth(session) {
+    const response = await instanse.post(`is-auth`, {session})
+    const results = response.data
+    console.log(results)
+    return results
+  },
+  async login(login, password) {
     const response = await fetch('https://locacalendarapi.herokuapp.com/login', {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify({
-        login: name,
-        password: password,
+        login, password
       })
     })
     const results = await response.json();
     console.log(results)
     return results
   },
-  async logout() {
-    const response = await fetch(`https://locacalendarapi.herokuapp.com/logout`)
-    const results = await response.json()
+  async logout(session) {
+    console.log(session)
+    const response = await instanse.post(`logout`, {session})
+    const results = response.data
     console.log(results)
     return results
   },
-  async register(name, email, password, confirmation) {
+  async register(login, email, password, confirmation) {
     const response = await fetch('https://locacalendarapi.herokuapp.com/registration', {
       method: 'POST',
       body: JSON.stringify({
-        login: name,
-        email: email,
-        password: password,
-        confirmation: confirmation,
+        login, email, password, confirmation,
       })
     })
     const results = await response.json();
@@ -34,39 +45,22 @@ export const authAPI = {
 }
 
 export const todoAPI = {
- async fetchTodos(user, year, month) {
-    const response = await fetch(`https://locacalendarapi.herokuapp.com/todos`, {
-      method: 'POST',
-      body: JSON.stringify({
-        login: user,
-        year: year,
-        month: month,
-      })
-    })
-    const results = await response.json()
+  async fetchTodos(session, year, month) {
+    console.log(session)
+    const response = await instanse.get(`todos/${session}/${year}/${month}`)
+    const results = response.data
+    console.log(results)
     return results
   },
-  async addTodoFetch(user, title, date) {
-    const response = await fetch(`https://locacalendarapi.herokuapp.com/todo`, {
-      method: 'POST',
-      body: JSON.stringify({
-        user: user,
-        title: title,
-        date: date,
-      })
-    })
-    const results = await response.json();
+  async addTodoFetch(session, title, date) {
+    const response = await instanse.post(`todo`, {session, title, date})
+    const results = response.data
     console.log(results)
     return results
   },
   async deleteTodoFetch(id) {
-    const response = await fetch(`https://locacalendarapi.herokuapp.com/todo`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        id: id,
-      })
-    })
-    const results = await response.json();
+    const response = await instanse.put(`todo`, {id})
+    const results = response.data
     console.log(results)
     return results
   }

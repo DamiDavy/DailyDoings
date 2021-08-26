@@ -1,17 +1,22 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { loginSelector} from '../redux/selectors'
 
-import {addTodoThunk} from '../redux/calendar-reducer'
-import { TextInput, SubmitFormButton, FormContainer, DisabledButton, Error } from '../styled-components/Forms-style'
+import { sessionSelector } from '../redux/selectors'
+import { addTodoThunk } from '../redux/calendar-reducer'
 
-export const AddTodoForm = ({date}) => {
+import { TextInput, SubmitFormButton, FormContainer,
+        DisabledButton, Error } from '../styled-components/Forms-style'
+import { ThemeContext } from '../App'
+
+export const AddTodoForm = ({ date }) => {
+
+  const theme = useContext(ThemeContext)
+
   const dateAsObject = useMemo(() => {
-    console.log(date)
     return new Date(date)
   }, [date])
 
-  const user = useSelector(loginSelector)
+  const session = useSelector(sessionSelector)
 
   const dispatch = useDispatch()
 
@@ -23,20 +28,21 @@ export const AddTodoForm = ({date}) => {
       setError('todo must contain at least 2 letters')
     }
     else {
-      console.log(user, todo, date)
-      dispatch(addTodoThunk(user, todo, date))
+      dispatch(addTodoThunk(session, todo, date))
       setTodo('')
     }
     e.preventDefault()
   }
 
   return (
-    <FormContainer>
-    <TextInput value={todo} onChange={(e) => setTodo(e.target.value)} placeholder='title'/>
-    {new Date() > dateAsObject.setDate(dateAsObject.getDate() + 1) ? 
-    <DisabledButton>Add Todo</DisabledButton> :
-    <SubmitFormButton onClick={(e) => addTodoFromForm(e)}>Add Todo</SubmitFormButton>}
-    {error && <Error>{error}</Error>}
+    <FormContainer dark={theme === 'dark'}>
+      <TextInput value={todo} onChange={(e) => setTodo(e.target.value)} placeholder='new todo text' />
+      {new Date() > dateAsObject.setDate(dateAsObject.getDate() + 1) ?
+        <DisabledButton dark={theme === 'dark'}>Add Todo</DisabledButton> :
+        <SubmitFormButton dark={theme === 'dark'} onClick={(e) => addTodoFromForm(e)}>
+          Add Todo
+        </SubmitFormButton>}
+      {error && <Error>{error}</Error>}
     </FormContainer>
-  );
+  )
 }

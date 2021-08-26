@@ -1,17 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Redirect } from 'react-router'
 
-import { loginSelector} from '../redux/selectors'
+import { sessionSelector} from '../redux/selectors'
 import { addTodoThunk } from '../redux/calendar-reducer'
-import {dateFormatted} from './Calendar'
-import { RepeatConfirmButton, CancelButton, RepeatFormContainer, InlineInput } from '../styled-components/Forms-style'
 
-export const RepeatTodoForm = ({todoId, hideTodoRepeatForm}) => {
+import { dateFormatted } from './Calendar'
 
-  const user = useSelector(loginSelector)
+import { RepeatConfirmButton, CancelButton, 
+  RepeatFormContainer, InlineInput } from '../styled-components/Forms-style'
+import { ThemeContext } from '../App'
 
-  const todo = useSelector(state => state.todosCalendar.filter(todo => todo.id === +todoId))
+export const RepeatTodoForm = ({ todoId, hideTodoRepeatForm }) => {
+  const theme = useContext(ThemeContext)
+
+  const session = useSelector(sessionSelector)
+
+  const todo = useSelector(state => state.todosCalendar.todos.find(todo => todo.id === +todoId))
 
   const [repaetedSuccessfully, setRepaetedSuccessfully] = useState(false)
 
@@ -24,33 +29,44 @@ export const RepeatTodoForm = ({todoId, hideTodoRepeatForm}) => {
   const dispatch = useDispatch()
 
   const repeatInDaysOrWeeks = (repeatCount, timeAmount) => {
-    const dateObject = new Date(todo[0].date)
+    const dateObject = new Date(todo.date)
     for (let i = 0; i < repeatCount; i += 1) {
       dateObject.setDate(dateObject.getDate() + +timeAmount)
-      const newDateAsString = 
+      const newDateAsString =
         dateFormatted(dateObject.getFullYear(), dateObject.getMonth(), dateObject.getDate())
-      dispatch(addTodoThunk(user, todo[0].title, newDateAsString))
+      dispatch(addTodoThunk(session, todo.title, newDateAsString))
     }
     setRepaetedSuccessfully(true)
   }
 
   return (
     <>
-    {repaetedSuccessfully && <Redirect to="/" />}
+      {repaetedSuccessfully && <Redirect to='/' />}
 
-    <RepeatFormContainer>In <InlineInput value={dayCount} onChange={(e) => setDayCount(e.target.value)}/> 
-    day(s) for <InlineInput value={repeatDayCount} onChange={(e) => setRepeatDayCount(e.target.value)}/> 
-    time(s) 
-    <RepeatConfirmButton onClick={() => repeatInDaysOrWeeks(repeatDayCount, dayCount)}>OK</RepeatConfirmButton>
-    </RepeatFormContainer>
+      <RepeatFormContainer dark={theme === 'dark'}>
+        In
+        <InlineInput value={dayCount} onChange={(e) => setDayCount(e.target.value)} />
+        day{dayCount > 1 && 's'} for
+        <InlineInput value={repeatDayCount} onChange={(e) => setRepeatDayCount(e.target.value)} />
+        time{repeatDayCount > 1 && 's'}
+        <RepeatConfirmButton dark={theme === 'dark'}
+          onClick={() => repeatInDaysOrWeeks(repeatDayCount, dayCount)}>OK
+        </RepeatConfirmButton>
+      </RepeatFormContainer>
 
-    <RepeatFormContainer>In <InlineInput value={weekCount} onChange={(e) => setWeekCount(e.target.value)}/> 
-    week(s) for <InlineInput value={repeatWeekCount} onChange={(e) => setRepeatWeekCount(e.target.value)}/> 
-    time(s) <RepeatConfirmButton onClick={() => repeatInDaysOrWeeks(repeatWeekCount, 7 * weekCount)}>
-      OK</RepeatConfirmButton></RepeatFormContainer>
-      <RepeatFormContainer>
-        <CancelButton onClick={() => hideTodoRepeatForm()}>Cansel</CancelButton>
+      <RepeatFormContainer dark={theme === 'dark'}>
+        In
+        <InlineInput value={weekCount} onChange={(e) => setWeekCount(e.target.value)} />
+        week{weekCount > 1 && 's'} for
+        <InlineInput value={repeatWeekCount} onChange={(e) => setRepeatWeekCount(e.target.value)} />
+        time{repeatWeekCount > 1 && 's'}
+        <RepeatConfirmButton dark={theme === 'dark'}
+          onClick={() => repeatInDaysOrWeeks(repeatWeekCount, 7 * weekCount)}>
+          OK</RepeatConfirmButton>
+      </RepeatFormContainer>
+      <RepeatFormContainer dark={theme === 'dark'}>
+        <CancelButton dark={theme === 'dark'} onClick={() => hideTodoRepeatForm()}>Cansel</CancelButton>
       </RepeatFormContainer>
     </>
-  );
+  )
 }

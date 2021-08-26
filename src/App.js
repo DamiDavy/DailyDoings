@@ -1,36 +1,55 @@
-import './App.css';
-import { BrowserRouter, Switch, Route, Redirect, NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter, Switch, Route, Redirect, NavLink } from "react-router-dom"
+import { useDispatch, useSelector } from 'react-redux'
 
-import {Calendar} from './components/Calendar'
-import {DayTodos} from './components/DayTodos'
-import {Login} from './components/Login'
-import { logoutThunk, loginAC } from './redux/auth-reducer'
-import { loggedInSelector, loginSelector } from './redux/selectors'
-import { Registration } from './components/Registration';
-import { useEffect, useState } from 'react';
-import { deleteTodo } from './redux/calendar-reducer';
-import { Container, ButtonLoginLogout, Header, AuthInfo } from './App-style'
+import { logoutThunk, isAuthThunk } from './redux/auth-reducer'
+import { loggedInSelector, loginSelector, sessionSelector } from './redux/selectors'
+import { deleteTodo } from './redux/calendar-reducer'
+
+import { Calendar } from './components/Calendar'
+import { DayTodos } from './components/DayTodos'
+import { Login } from './components/Login'
+import { Registration } from './components/Registration'
+
+import { Container, ButtonLoginLogout, ButtonsContainer, FlexItem } from './App-style'
+import './App.css'
 
 const withRedirectionToLogin = (component, isAuth) => {
-  if (!isAuth) return <Redirect to="/login" />
+  if (!isAuth) return <Redirect to='/login' />
   return component
 }
 
+export const ThemeContext = React.createContext()
+
 function App() {
+
+  const themeFromLocalStorage = localStorage.getItem('theme') || 'light'
+  
+  const [theme, setTheme] = useState(themeFromLocalStorage)
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const changeTheme = () => {
+    if (theme === 'light') {
+      setTheme('dark')
+    } else {
+      setTheme('light')
+    }
+  }
 
   const now = new Date()
 
   const [todosFetched, setTodosFetched] = useState(false)
 
-  const todos = useSelector(state => state.todosCalendar)
+  const todos = useSelector(state => state.todosCalendar.todos)
 
   const dispatch = useDispatch()
 
   const exit = () => {
-    dispatch(logoutThunk())
-    localStorage.removeItem('login')
-    localStorage.removeItem('authorized')
+    dispatch(logoutThunk(session))
+    localStorage.removeItem('session')
     todos.map(todo => dispatch(deleteTodo(todo.id)))
   }
 
@@ -40,57 +59,64 @@ function App() {
 
   const login = useSelector(loginSelector)
   const loggedIn = useSelector(loggedInSelector)
+  const session = useSelector(sessionSelector)
 
   useEffect(() => {
-    if (loggedIn && !localStorage.getItem('authorized')) {
-      localStorage.setItem('login', login)
-      localStorage.setItem('authorized', 'ok')
-    } else if (localStorage.getItem('authorized') === 'ok' && !loggedIn) {
-      dispatch(loginAC(localStorage.getItem('login'), ''))
+    if (loggedIn && !localStorage.getItem('session')) {
+      localStorage.setItem('session', session)
+    } else if (localStorage.getItem('session') && !loggedIn) {
+      dispatch(isAuthThunk(localStorage.getItem('session')))
     }
-  }, [loggedIn, login, dispatch])
-
-  // const [hiddenLoginLink, setHiddenLoginLink] = useState(false)
-
-  // const hideLoginLink = () => {
-  //   setHiddenLoginLink(true)
-  // }
-
-  // const showLoginLink = () => {
-  //   setHiddenLoginLink(false)
-  // }
+  }, [loggedIn, session, dispatch])
 
   return (
     <BrowserRouter>
-    <Container>
-      <Header>
-      <AuthInfo>
-    {loggedIn ? <><span>As {login}</span>
-    <ButtonLoginLogout onClick={() => exit()}>Log Out</ButtonLoginLogout></> :
-    <ButtonLoginLogout>
-      <NavLink className='loginLinkGeneral' activeClassName="selected" to={'/login'}>Login</NavLink>
-      </ButtonLoginLogout>}
-    </AuthInfo>
-    </Header>
-      <Switch>
-        <Route path="/login" >
-          <Login/>
-        </Route>
-        <Route path="/registration" >
-          <Registration/>
-        </Route>
-        <Route path="/:date">
-          {withRedirectionToLogin(<DayTodos exit={exit}/>, loggedIn)}
-        </Route>
-        <Route path="/">
-          <Calendar year={now.getFullYear()} month={now.getMonth()} 
+      {theme === 'dark' ? <img src='./dark-mountains.png' 
+        className='back-img' alt='night mountains'/> :
+        <img src='./pinky.png' 
+        className='back-img light-img' alt='pink nature'/>}
+
+      <Container dark={theme === 'dark'}>
+        <ButtonsContainer>
+          <FlexItem>
+            {loggedIn ? <><span>As {login}</span>
+              <ButtonLoginLogout onClick={() => exit()} dark={theme === 'dark'}>
+                Log Out
+              </ButtonLoginLogout></> :
+    
+              <NavLink className='loginLinkGeneral' activeClassName='selected' to={'/login'}>
+                <ButtonLoginLogout dark={theme === 'dark'}>Login</ButtonLoginLogout>
+              </NavLink>}
+          </FlexItem>
+        </ButtonsContainer>
+        <ThemeContext.Provider value={theme}>
+          <Switch>
+            <Route path='/login' >
+              <Login/>
+            </Route>
+            <Route path='/registration'>
+              <Registration/>
+            </Route>
+            <Route path='/:date'>
+              {withRedirectionToLogin(<DayTodos exit={exit}/>, loggedIn)}
+            </Route>
+            <Route path='/'>
+              <Calendar year={now.getFullYear()} month={now.getMonth()} 
                           today={now.getDate()} exit={exit} 
                           todosFetched={todosFetched} setFetched={setFetched}/>
-        </Route>
-      </Switch>
+            </Route>
+          </Switch>
+        </ThemeContext.Provider>
+        <ButtonsContainer>
+          <FlexItem>
+            <ButtonLoginLogout onClick={changeTheme} dark={theme === 'dark'}>
+              To {theme === 'dark' ? 'Light' : 'Dark'} Theme
+            </ButtonLoginLogout>
+          </FlexItem>
+        </ButtonsContainer>
       </Container>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -14,9 +14,9 @@ export const TodosCount = styled.div`
   width: 1.1rem;
   heigth: 1.5rem;
   font-size: 0.8rem;
-  font-weigth: bold;
-  background-color: palevioletred;
-  color: white;
-  border: 0.1rem solid palevioletred;
+  font-weight: bold;
+  background-color: ${props => props.dark ? "Gainsboro" : "palevioletred"};
+  color: ${props => props.dark ? "MidnightBlue" : "white"};
+  border: 0.1rem solid ${props => props.dark ? "Gainsboro" : "palevioletred"};
   border-radius: 50%;
 `
