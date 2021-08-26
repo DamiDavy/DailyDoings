@@ -9,7 +9,6 @@ export const authAPI = {
   async isAuth(session) {
     const response = await instanse.post(`is-auth`, {session})
     const results = response.data
-    console.log(results)
     return results
   },
   async login(login, password) {
@@ -20,15 +19,13 @@ export const authAPI = {
         login, password
       })
     })
-    const results = await response.json();
-    console.log(results)
+    const results = await response.json()
     return results
   },
   async logout(session) {
     console.log(session)
     const response = await instanse.post(`logout`, {session})
     const results = response.data
-    console.log(results)
     return results
   },
   async register(login, email, password, confirmation) {
@@ -38,8 +35,7 @@ export const authAPI = {
         login, email, password, confirmation,
       })
     })
-    const results = await response.json();
-    console.log(results)
+    const results = await response.json()
     return results
   }
 }
@@ -49,19 +45,16 @@ export const todoAPI = {
     console.log(session)
     const response = await instanse.get(`todos/${session}/${year}/${month}`)
     const results = response.data
-    console.log(results)
     return results
   },
   async addTodoFetch(session, title, date) {
     const response = await instanse.post(`todo`, {session, title, date})
     const results = response.data
-    console.log(results)
     return results
   },
   async deleteTodoFetch(id) {
     const response = await instanse.put(`todo`, {id})
     const results = response.data
-    console.log(results)
     return results
   }
 }
