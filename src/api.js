@@ -42,7 +42,6 @@ export const authAPI = {
 
 export const todoAPI = {
   async fetchTodos(session, year, month) {
-    console.log(session)
     const response = await instanse.get(`todos/${session}/${year}/${month}`)
     const results = response.data
     return results
