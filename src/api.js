@@ -7,7 +7,7 @@ const instanse = axios.create({
 
 export const authAPI = {
   async isAuth(session) {
-    const response = await instanse.post(`is-auth`, {session})
+    const response = await instanse.post(`is-auth`, { session })
     const results = response.data
     return results
   },
@@ -24,7 +24,7 @@ export const authAPI = {
   },
   async logout(session) {
     console.log(session)
-    const response = await instanse.post(`logout`, {session})
+    const response = await instanse.post(`logout`, { session })
     const results = response.data
     return results
   },
@@ -47,12 +47,17 @@ export const todoAPI = {
     return results
   },
   async addTodoFetch(session, title, date) {
-    const response = await instanse.post(`todo`, {session, title, date})
+    const response = await instanse.post(`todo`, { session, title, date })
+    const results = response.data
+    return results
+  },
+  async editTodoFetch(id, title) {
+    const response = await instanse.put(`todo/${id}`, { title })
     const results = response.data
     return results
   },
   async deleteTodoFetch(id) {
-    const response = await instanse.put(`todo`, {id})
+    const response = await instanse.delete(`todo/${id}`)
     const results = response.data
     return results
   }

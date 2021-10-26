@@ -7,6 +7,9 @@ export const registeredSelector = (state) => {
 export const loginSelector = (state) => {
   return state.authentication.login
 }
+export const isLoadingSelector = (state) => {
+  return state.authentication.isLoading
+}
 export const sessionSelector = (state) => {
   return state.authentication.session
 }

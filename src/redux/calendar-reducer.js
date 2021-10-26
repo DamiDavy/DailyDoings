@@ -3,6 +3,7 @@ import { todoAPI } from '../api'
 const ADD_TODO = 'ADD_TODO'
 const DELETE_TODO = 'DELETE_TODO'
 const TOGGLE_IS_FETCHING = 'DELETE_TODO'
+const EDIT_TODO = 'EDIT_TODO'
 
 export const addTodo = (date, todo, id) => ({
   type: ADD_TODO,
@@ -13,12 +14,16 @@ export const deleteTodo = (id) => ({
   type: DELETE_TODO, id
 })
 
-const toggleIsFetching = (isFetching) => ({ 
+export const editTodo = (id, title) => ({
+  type: EDIT_TODO, id, title
+})
+
+const toggleIsFetching = (isFetching) => ({
   type: TOGGLE_IS_FETCHING,
   isFetching,
 })
 
-const initialState = { 
+const initialState = {
   todos: [],
   isFetching: false,
 }
@@ -31,16 +36,24 @@ export const todosReducer = (state = initialState, action) => {
       }
       else {
         const newTodo = {
-            title: action.todo,
-            id: action.id,
-            date: action.date
-          }
-        return { ...state, todos: [ ...state.todos, newTodo ] }
+          title: action.todo,
+          id: action.id,
+          date: action.date
+        }
+        return { ...state, todos: [...state.todos, newTodo] }
       }
+    case EDIT_TODO:
+      const todoTarget = state.todos.find(todo => todo.id === action.id)
+      const newTodo = {
+        ...todoTarget,
+        title: action.title
+      }
+      const newTodos = state.todos.filter(todo => todo.id !== action.id)
+      return { ...state, todos: [...newTodos, newTodo] }
     case DELETE_TODO:
-      return {...state, todos: state.todos.filter(todo => todo.id !== action.id) }
+      return { ...state, todos: state.todos.filter(todo => todo.id !== action.id) }
     case TOGGLE_IS_FETCHING:
-      return {...state, isFetching: action.isFetching }
+      return { ...state, isFetching: action.isFetching }
     default:
       return state
   }
@@ -61,6 +74,13 @@ export const addTodoThunk = (session, title, date) => async (dispatch) => {
   if (response.result === 0) {
     const dateAsArray = date.split('-')
     dispatch(getTodosThunk(session, dateAsArray[0], dateAsArray[1]))
+  }
+}
+
+export const editTodoThunk = (id, title) => async (dispatch) => {
+  const response = await todoAPI.editTodoFetch(id, title)
+  if (response.result === 0) {
+    dispatch(editTodo(id, title))
   }
 }
 

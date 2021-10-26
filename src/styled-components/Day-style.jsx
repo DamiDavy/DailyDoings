@@ -9,11 +9,10 @@ export const DayItem = styled.div`
 
 export const TodosCount = styled.div`
   position: absolute;
-  top: 0rem;
+  top: -0.4rem;
   right: 0rem;
-  width: 1.1rem;
-  heigth: 1.5rem;
   font-size: 0.8rem;
+  padding: 0.2rem;
   font-weight: bold;
   background-color: ${props => props.dark ? "Gainsboro" : "palevioletred"};
   color: ${props => props.dark ? "MidnightBlue" : "white"};

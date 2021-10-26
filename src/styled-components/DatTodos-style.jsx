@@ -3,7 +3,9 @@ import styled from 'styled-components'
 export const TodosContainer = styled.div`
   text-align: center;
   margin: 0 auto;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid ${props => props.dark ? "#666" : "#eee"};
 `
 
 export const TodoContainer = styled.div`
@@ -11,7 +13,7 @@ export const TodoContainer = styled.div`
   align-items: center;
   flex-wrap: nowrap;
   border-top: 1px solid ${props => props.dark ? "#666" : "#eee"};
-  padding: 0rem 2rem;
+  padding: 0rem 0.3rem;
   margin: 0rem;
 `
 
@@ -22,7 +24,7 @@ export const TodoTitle = styled.div`
 export const ButtonHandleTodo = styled.button`
   color: ${props => props.dark ? "MidnightBlue" : "palevioletred"};
   border: ${props => props.dark ? "none" : "1px solid palevioletred"};
-  background-color: ${props => props.dark ?  "DarkGrey" : "white"};
+  background-color: ${props => props.dark ? "DarkGrey" : "white"};
   font-size: 1em;
   font-weight: bold;
   margin: 0.5em;
@@ -33,4 +35,8 @@ export const ButtonHandleTodo = styled.button`
 
 export const TodoButtons = styled.div`
   margin-left: auto;
+`
+
+export const Pencil = styled.span`
+  font-size: 0.8rem
 `

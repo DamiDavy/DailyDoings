@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { sessionSelector } from '../redux/selectors'
 import { addTodoThunk } from '../redux/calendar-reducer'
 
-import { TextInput, SubmitFormButton, FormContainer,
-        DisabledButton, Error } from '../styled-components/Forms-style'
+import {
+  TextInput, SubmitFormButton, FormContainer,
+  DisabledButton, Error
+} from '../styled-components/Forms-style'
 import { ThemeContext } from '../App'
 
 export const AddTodoForm = ({ date }) => {
@@ -34,9 +36,18 @@ export const AddTodoForm = ({ date }) => {
     e.preventDefault()
   }
 
+  const validateInputLength = (title) => {
+    if (title.length <= 18) {
+      setTodo(title)
+    }
+    else {
+      setError('todo must not contain more than 18 letters')
+    }
+  }
+
   return (
-    <FormContainer dark={theme === 'dark'}>
-      <TextInput value={todo} onChange={(e) => setTodo(e.target.value)} placeholder='new todo text' />
+    <FormContainer dark={theme === 'dark'} onClick={() => setError('')}>
+      <TextInput value={todo} onChange={(e) => validateInputLength(e.target.value)} placeholder='new todo text' />
       {new Date() > dateAsObject.setDate(dateAsObject.getDate() + 1) ?
         <DisabledButton dark={theme === 'dark'}>Add Todo</DisabledButton> :
         <SubmitFormButton dark={theme === 'dark'} onClick={(e) => addTodoFromForm(e)}>

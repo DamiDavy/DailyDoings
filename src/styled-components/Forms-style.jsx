@@ -6,7 +6,7 @@ export const TextInput = styled.input`
   border-radius: 4px;
   resize: vertical;
   font-size: 1em;
-  margin-bottom: 1rem;
+  margin: 0.5rem;
 `
 
 export const LoginFormInput = styled(TextInput)`
@@ -32,6 +32,7 @@ export const SubmitFormButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   font-size: 1em;
+  margin: 0.3rem;
 `
 
 export const DisabledButton = styled(SubmitFormButton)`
@@ -52,7 +53,7 @@ export const CancelButton = styled(RepeatConfirmButton)`
 export const FormContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   flex-wrap: wrap;
   font-size: 1.1rem;
   padding-top: 1rem;
@@ -65,9 +66,7 @@ export const LoginFormContainer = styled.div`
 
 export const RepeatFormContainer = styled(FormContainer)`
   font-size: 1rem;
-  padding: 0.25rem 0.5rem;
-  justify-content: space-around;
-  padding: 0rem 2rem;
+  padding: 0.2rem 0.5rem;
 `
 
 export const Error = styled.p`
