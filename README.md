@@ -12,7 +12,9 @@ Here are my credentials for [log in](https://willhandleit.herokuapp.com/login):
 login – lovely  
 password - lovely2007.  
 
-- - -
+### Demo
+
+![App Promo Gif](DailyDoings.gif)
 
 This is single-page application for keeping track of the diet throughout the day and throughout the months.
 
@@ -36,7 +38,3 @@ For **unauthorized users** it's just a calendar.
 
 Frontend: React, Redux, Styled Components  
 Backend: Django
-
-### Demo
-
-![App Promo Gif](DailyDoings.gif)
