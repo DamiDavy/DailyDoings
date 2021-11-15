@@ -3,14 +3,14 @@
 }
 
 .day {
-  border: 1px solid hsla(0, 0%, 100%, 0.0);
+  border: 1px solid rgba(136, 134, 134, 0.1);
 }
 .day:hover {
-  border: 1px solid #ddd;
+  border: 1px solid rgb(133, 131, 131);
 }
 
 .dayLink {
-  color: #777;
+  color: rgb(85, 84, 84);
 }
 .dayLink:hover {
   color: #000;
@@ -39,7 +39,7 @@
 }
 
 .light-img {
-  opacity: 0.4;
+  opacity: 0.9;
 }
 
 .disabled {
