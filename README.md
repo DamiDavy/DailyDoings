@@ -16,7 +16,7 @@ password - lovely2007.
 
 ![App Promo Gif](DailyDoings.gif)
 
-This is single-page application for keeping track of the diet throughout the day and throughout the months.
+This is single-page application for keeping track of todos on the calendar.
 
 Frontend and backend apps are divided into two repositories and are connected through **REST API**.  
 Backend is implemented on **Django**.
