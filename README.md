@@ -10,7 +10,7 @@ Registration is available [here](https://willhandleit.herokuapp.com/registration
 Or.  
 Here are my credentials for [log in](https://willhandleit.herokuapp.com/login):  
 login – lovely  
-password - lovely2007.  
+password - lovely2007  
 
 ### Demo
 
