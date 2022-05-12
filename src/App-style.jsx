@@ -4,7 +4,7 @@ export const Container = styled.div`
   min-height: 100vh;
   margin: 0 auto;
   width: 80%;
-  max-width: 550px;
+  max-width: 590px;
   font-size: 1rem;
   color: ${props => props.dark ? "#bbb" : "gray"};
   background-color: ${props => props.dark ? "hsla(232, 60%, 12%, 0.7)" : "hsla(357, 17%, 90%, 0.9)"};
